@@ -17,7 +17,9 @@ var WebManager = /** @class */ (function () {
         });
     };
     WebManager.prototype.Start = function () {
-        this.ExpressCore.listen(8080);
+        this.ExpressCore.listen(8003, function () {
+            console.log('Server start');
+        });
     };
     WebManager.Instance = new WebManager();
     return WebManager;

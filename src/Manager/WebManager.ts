@@ -22,7 +22,9 @@ class WebManager {
     }
 
     public Start(): void {
-        this.ExpressCore.listen(8080)
+        this.ExpressCore.listen(8003, () => {
+            console.log('Server start')
+        })
     }
 
 }

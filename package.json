@@ -9,7 +9,7 @@
     "build:dev": "tsc -w ./src/index.ts --outDir ./dist/ --esModuleInterop true --resolveJsonModule",
     "start:prod": "node ./dist/index.js dev",
     "start:dev": "nodemon ./dist/index.js dev",
-    "start": "npm run start:prod"
+    "start": "npm install && npm run start:prod"
   },
   "author": "",
   "license": "ISC",
