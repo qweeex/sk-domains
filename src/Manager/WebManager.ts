@@ -1,6 +1,8 @@
 import express from "express"
 import * as core from "express-serve-static-core"
 
+import AuthController from "../Controller/AuthController";
+
 
 class WebManager {
     public static readonly Instance: WebManager = new WebManager()
@@ -16,9 +18,8 @@ class WebManager {
 
 
     private InitRouter(): void {
-        this.ExpressCore.get('/', (req: express.Request, res: express.Response) => {
-            res.send('asd')
-        })
+        this.ExpressCore.post('/api/auth/registration', AuthController.registration)
+        this.ExpressCore.post('/api/auth/login', AuthController.login)
     }
 
     public Start(): void {
