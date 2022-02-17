@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var express_1 = __importDefault(require("express"));
+var AuthController_1 = __importDefault(require("../Controller/AuthController"));
 var WebManager = /** @class */ (function () {
     function WebManager() {
         this.ExpressCore = express_1["default"]();
@@ -12,9 +13,8 @@ var WebManager = /** @class */ (function () {
         this.InitRouter();
     }
     WebManager.prototype.InitRouter = function () {
-        this.ExpressCore.get('/', function (req, res) {
-            res.send('asd');
-        });
+        this.ExpressCore.post('/api/auth/registration', AuthController_1["default"].registration);
+        this.ExpressCore.post('/api/auth/login', AuthController_1["default"].login);
     };
     WebManager.prototype.Start = function () {
         this.ExpressCore.listen(8003, function () {

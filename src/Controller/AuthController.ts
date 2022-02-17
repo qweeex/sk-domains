@@ -1,26 +1,22 @@
 import express from "express";
+import Users from "../Models/Users";
+import Role from "../Models/Role";
+import bcrypt from "bcrypt"
 
 class AuthController{
 
-    public static async registration(req:express.Request, res:express.Response){
+    public static async registration(req: express.Request, res: express.Response){
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    message: "ошибка регистрации",
-                    errors
-                })
-            }
             const {username, password} = req.body
-            const candidate = await User.findOne({username: username})
+            const candidate = await Users.findOne({username: username})
             if (candidate) {
                 return res.status(400).json({
                     message: "Пользователь с таким именем уже существует"
                 })
             }
             const hashPassword = bcrypt.hashSync(password, 7)
-            const userRole = await Role.findOne({value: 'user'})
-            const user = new User({
+            const userRole: any = await Role.findOne({value: 'user'})
+            const user = new Users({
                 username: username,
                 password: hashPassword,
                 roles: [userRole.value]
@@ -40,7 +36,7 @@ class AuthController{
     public static async login(req:express.Request, res:express.Response){
         try {
             const {username, password} = req.body
-            const candidate = await User.findOne({username: username})
+            const candidate = await Users.findOne({username: username})
 
             if (!candidate) {
                 return res.status(401).json({status: false,message: "Пользователь с таким именем не найден"})
@@ -68,7 +64,7 @@ class AuthController{
 
     public static async getUsers(req:express.Request, res:express.Response){
         try {
-            const users = await User.find()
+            const users = await Users.find()
             res.json(users)
         } catch (e) {
             console.log(e)

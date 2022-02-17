@@ -35,25 +35,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
-var WebManager_1 = __importDefault(require("./Manager/WebManager"));
-var DatabaseManager_1 = __importDefault(require("./Manager/DatabaseManager"));
-// @ts-ignore
-function ServerStart() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, DatabaseManager_1["default"].Instance.Connect()
-                        .then(function () { return console.log('Database connect...'); })["catch"](function (e) { return console.log(e); })];
-                case 1:
-                    _a.sent();
-                    WebManager_1["default"].Instance.Start();
-                    return [2 /*return*/];
-            }
+var mongoose_1 = require("mongoose");
+var DatabaseManager = /** @class */ (function () {
+    function DatabaseManager() {
+        this.URL = "mongodb+srv://qweeex_domain:dxgnr257bMd9OQsN@cluster0.uag8a.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    }
+    DatabaseManager.prototype.Connect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, mongoose_1.connect(this.URL)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
         });
-    });
-}
-ServerStart();
+    };
+    DatabaseManager.Instance = new DatabaseManager();
+    return DatabaseManager;
+}());
+exports["default"] = DatabaseManager;
