@@ -28,9 +28,7 @@ class Users {
         return new Promise<any>(async (resolve, reject) => {
             await MysqlManager.Instance.MysqlPoolConnections.query({
                 sql: 'SELECT * FROM `role` WHERE `value` = ?',
-                values: {
-                    value: role
-                }
+                values: role
             }, (err, user) => {
                 if (err) {
                     reject(err)
@@ -41,7 +39,7 @@ class Users {
         })
     }
 
-    async createUser(user: User): Promise<any>{
+    async createUser(user: { password: string; roles: string; username: any }): Promise<any>{
         return new Promise<any>(async (resolve, reject) => {
             await MysqlManager.Instance.MysqlPoolConnections.query('INSERT INTO users SET ?', user, (err, results) => {
                 if (err){

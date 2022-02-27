@@ -1,72 +1,92 @@
 import express from "express";
 import MysqlManager from "../Manager/MysqlManager";
 import Users from "../Models/Users";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import {secret} from "../Data/Config.json"
 
 class AuthController {
 
     // @ts-ignore
     async RegistrationUser(req: express.Request, res: express.Response){
 
-        const {username, password} = req.body
+        const {username, pass} = req.body
 
-        if (username != '' && password != ''){
-            await MysqlManager.Instance.MysqlPoolConnections.query({
-                sql: "SELECT * FROM `role`"
-            }, async (error, data) => {
-                if (error) throw error;
-                let user = {
-                    username: username,
-                    password: password,
-                    roles: JSON.stringify(data)
-                }
-                await MysqlManager.Instance.MysqlPoolConnections.query('INSERT INTO users SET ?', user, (err, results, fields) => {
-                    if (err){
-                        res.json({
-                            status: false,
-                            err
-                        })
-                    } else {
-                        res.json({
-                            status: true,
-                            results
+        if (username != '' && pass != ''){
+            try {
+                await Users.findUser(username).then(async (currentUser) => {
+                    if (currentUser.length === 0){
+                        await Users.findRole('admin').then(async (role) => {
+                            const hashPassword = bcrypt.hashSync(pass, 10)
+                            await Users.createUser({
+                                username: username,
+                                password: hashPassword,
+                                roles: JSON.stringify(role)
+                            })
+                                .then((newUser) => {
+                                    return res.json({
+                                        status: true,
+                                        newUser
+                                    })
+                                })
                         })
                     }
                 })
-            })
+            } catch (e) {
+                console.error(e)
+                return res.json({
+                    status: false,
+                    err: e
+                })
+            }
         } else {
             res.json({
                 status: false,
                 message: 'Username or password is empty'
             })
         }
-
-
-        /*await MysqlManager.Instance.MysqlPoolConnections.query({
-            sql: 'INSERT INTO users` (`id`, `username`, `password`, `roles`) VALUES ?'
-        })*/
     }
 
     async LoginUser(req: express.Request, res: express.Response){
+        try {
+            const {username, pass} = req.body
 
-        const {username, password} = req.body
+            await Users.findUser(username)
+                .then(user => {
+                    if (user.length > 0){
+                        const validPassword = bcrypt.compareSync(pass, user[0].password)
+                        if (!validPassword){
+                            return res.json({
+                                status: false,
+                                message: "Err password"
+                            })
+                        }
+                        const token = jwt.sign({
+                            id: user[0].id,
+                            roles: user[0].roles
+                        }, secret, {
+                            expiresIn: "10h"
+                        })
+                        return res.json({
+                            status: true,
+                            token: token,
+                            roles: JSON.parse(user[0].roles)
+                        })
 
-        await Users.findUser(username)
-            .then(user => {
-                if (user.length > 0){
-
-                }
-                res.json({
-                    status: true,
-                    user
+                    } else {
+                        return res.json({
+                            status: false,
+                            message: "User is not detect"
+                        })
+                    }
                 })
+        } catch (e) {
+            console.error(e)
+            return res.json({
+                status: false,
+                err: e
             })
-            .catch(err => {
-                res.json({
-                    status: false,
-                    err
-                })
-            })
-
+        }
     }
 
 }

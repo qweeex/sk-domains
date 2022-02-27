@@ -25,6 +25,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/mysql": "^2.15.21",
     "axios": "^0.26.0",
     "bcrypt": "^5.0.1",
