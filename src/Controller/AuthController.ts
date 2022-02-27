@@ -1,75 +1,74 @@
 import express from "express";
+import MysqlManager from "../Manager/MysqlManager";
 import Users from "../Models/Users";
-import Role from "../Models/Role";
-import bcrypt from "bcrypt"
 
-class AuthController{
+class AuthController {
 
-    public static async registration(req: express.Request, res: express.Response){
-        try {
-            const {username, password} = req.body
-            const candidate = await Users.findOne({username: username})
-            if (candidate) {
-                return res.status(400).json({
-                    message: "Пользователь с таким именем уже существует"
+    // @ts-ignore
+    async RegistrationUser(req: express.Request, res: express.Response){
+
+        const {username, password} = req.body
+
+        if (username != '' && password != ''){
+            await MysqlManager.Instance.MysqlPoolConnections.query({
+                sql: "SELECT * FROM `role`"
+            }, async (error, data) => {
+                if (error) throw error;
+                let user = {
+                    username: username,
+                    password: password,
+                    roles: JSON.stringify(data)
+                }
+                await MysqlManager.Instance.MysqlPoolConnections.query('INSERT INTO users SET ?', user, (err, results, fields) => {
+                    if (err){
+                        res.json({
+                            status: false,
+                            err
+                        })
+                    } else {
+                        res.json({
+                            status: true,
+                            results
+                        })
+                    }
                 })
-            }
-            const hashPassword = bcrypt.hashSync(password, 7)
-            const userRole: any = await Role.findOne({value: 'user'})
-            const user = new Users({
-                username: username,
-                password: hashPassword,
-                roles: [userRole.value]
             })
-            await user.save()
-            return res.json({
-                message: "Пользователь успешно зарегистрирован"
-            })
-        } catch (e) {
-            console.log(e)
-            res.status(400).json({
-                message: 'Auth err'
-            })
-        }
-    }
-
-    public static async login(req:express.Request, res:express.Response){
-        try {
-            const {username, password} = req.body
-            const candidate = await Users.findOne({username: username})
-
-            if (!candidate) {
-                return res.status(401).json({status: false,message: "Пользователь с таким именем не найден"})
-            }
-
-            const validPassword = bcrypt.compareSync(password, candidate.password)
-
-            if (!validPassword){
-                return res.status(401).json({status: false,message: "Ошибка пароля"})
-            }
-
-            const token = generateAccessToken(candidate._id, candidate.roles)
+        } else {
             res.json({
-                token: token,
-            })
-
-        } catch (e) {
-            console.log(e)
-            res.status(500).json({
                 status: false,
-                message: 'Auth err'
+                message: 'Username or password is empty'
             })
         }
+
+
+        /*await MysqlManager.Instance.MysqlPoolConnections.query({
+            sql: 'INSERT INTO users` (`id`, `username`, `password`, `roles`) VALUES ?'
+        })*/
     }
 
-    public static async getUsers(req:express.Request, res:express.Response){
-        try {
-            const users = await Users.find()
-            res.json(users)
-        } catch (e) {
-            console.log(e)
-        }
+    async LoginUser(req: express.Request, res: express.Response){
+
+        const {username, password} = req.body
+
+        await Users.findUser(username)
+            .then(user => {
+                if (user.length > 0){
+
+                }
+                res.json({
+                    status: true,
+                    user
+                })
+            })
+            .catch(err => {
+                res.json({
+                    status: false,
+                    err
+                })
+            })
+
     }
+
 }
 
-export default AuthController
+export default new AuthController()

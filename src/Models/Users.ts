@@ -1,10 +1,57 @@
-import { Schema, model } from 'mongoose'
-import UsersModelStruct from "../Struct/UsersModelStruct";
+import MysqlManager from "../Manager/MysqlManager";
 
-const schema = new Schema<UsersModelStruct>({
-    username: {type: String, unique: true, require: true},
-    password: {type: String, require: true},
-    roles: [{type: String, ref: 'Role'}]
-})
+interface User {
+    username: string;
+    password: string;
+    roles: string;
+}
 
-export default model('User', schema)
+class Users {
+
+    // @ts-ignore
+    async findUser(username: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            await MysqlManager.Instance.MysqlPoolConnections.query({
+                sql: 'SELECT * FROM `users` WHERE `username` = ?',
+                values: username
+            }, (err, user) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(user)
+                }
+            })
+        })
+    }
+
+    async findRole(role: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            await MysqlManager.Instance.MysqlPoolConnections.query({
+                sql: 'SELECT * FROM `role` WHERE `value` = ?',
+                values: {
+                    value: role
+                }
+            }, (err, user) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(user)
+                }
+            })
+        })
+    }
+
+    async createUser(user: User): Promise<any>{
+        return new Promise<any>(async (resolve, reject) => {
+            await MysqlManager.Instance.MysqlPoolConnections.query('INSERT INTO users SET ?', user, (err, results) => {
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(results)
+                }
+            })
+        })
+    }
+
+}
+export default new Users()

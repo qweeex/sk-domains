@@ -1,7 +1,7 @@
 import express from "express"
 import * as core from "express-serve-static-core"
-
 import AuthController from "../Controller/AuthController";
+
 
 
 class WebManager {
@@ -18,8 +18,8 @@ class WebManager {
 
 
     private InitRouter(): void {
-        this.ExpressCore.post('/api/auth/registration', AuthController.registration)
-        this.ExpressCore.post('/api/auth/login', AuthController.login)
+        this.ExpressCore.post('/api/auth/register', AuthController.RegistrationUser)
+        this.ExpressCore.post('/api/auth/login', AuthController.LoginUser)
     }
 
     public Start(): void {
