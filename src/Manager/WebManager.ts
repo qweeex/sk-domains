@@ -14,10 +14,8 @@ class WebManager {
 
     private constructor() {
         this.ExpressCore = express()
-        // @ts-ignore
         this.ExpressCore.use(express.json())
-        this.ExpressCore.use(cors)
-
+        this.ExpressCore.use(cors())
         this.InitRouter()
     }
 
