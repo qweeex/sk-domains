@@ -1,19 +1,5 @@
 import MysqlManager from "../Manager/MysqlManager";
-
-interface DomainInterface {
-    domain: string;
-    paidDate: string;
-    domainUrl: string;
-    domainLogin: string;
-    domainPass: string;
-    hostUrl: string;
-    hostLogin: string;
-    hostPass: string;
-    price: string;
-    serviceHost: boolean;
-    serviceDomain: boolean;
-    active: boolean;
-}
+import DomainsInterface from "../Struct/DomainsInterface";
 
 class Domains {
 
@@ -46,8 +32,23 @@ class Domains {
             })
         })
     }
+
+    async deleteDomain(idDomains: string): Promise<any>{
+        return new Promise<any>(async (resolve, reject) => {
+            await MysqlManager.Instance.MysqlPoolConnections.query({
+                sql: "DELETE FROM `domains` WHERE `id` = ?",
+                values: idDomains
+            }, (err, domains) => {
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(domains)
+                }
+            })
+        })
+    }
     
-    async addDomains(domains: DomainInterface): Promise<any>{
+    async addDomains(domains: DomainsInterface): Promise<any>{
         return new Promise<any>(async (resolve, reject) => {
             await MysqlManager.Instance.MysqlPoolConnections.query('INSERT INTO domains SET ?', domains, (err, results) => {
                 if (err){
@@ -58,6 +59,22 @@ class Domains {
             })
         })
     }
+
+    async changeDomains(idDomains: string, domainsData: DomainsInterface): Promise<any>{
+        console.log(idDomains)
+        console.log(domainsData)
+        return new Promise<any>(async (resolve, reject) => {
+            await MysqlManager.Instance.MysqlPoolConnections.query('UPDATE `domains` SET ? WHERE  ?', [domainsData, {id: idDomains}], (err, results) => {
+                if (err){
+                    reject(err)
+                } else {
+                    resolve(results)
+                }
+            })
+        })
+    }
+
+
 
 
 

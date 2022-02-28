@@ -2,6 +2,7 @@ import express from "express"
 import * as core from "express-serve-static-core"
 import AuthController from "../Controller/AuthController";
 import DomainsController from "../Controller/DomainsController";
+import RoleMiddleware from "../Middleware/RoleMiddleware";
 
 
 
@@ -24,10 +25,10 @@ class WebManager {
         this.ExpressCore.post('/api/auth/login', AuthController.LoginUser)
 
         // Domains API
-        this.ExpressCore.get('/api/domains', DomainsController.getAllDomains)
-        this.ExpressCore.put('/api/domains', DomainsController.changeDomains)
-        this.ExpressCore.post('/api/domains', DomainsController.addDomains)
-        this.ExpressCore.delete('/api/domains', DomainsController.deleteDomains)
+        this.ExpressCore.get('/api/domains', RoleMiddleware('admin'), DomainsController.getAllDomains)
+        this.ExpressCore.put('/api/domains', RoleMiddleware('admin'), DomainsController.changeDomains)
+        this.ExpressCore.post('/api/domains', RoleMiddleware('admin'), DomainsController.addDomains)
+        this.ExpressCore.delete('/api/domains', RoleMiddleware('admin'), DomainsController.deleteDomains)
     }
 
     public Start(): void {
