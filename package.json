@@ -12,7 +12,7 @@
     "start:dev": "nodemon ./dist/index.js",
     "start": "npm install && npm run start:prod",
     "sendMail": "node ./dist/Service/SendMailDomains.js",
-    "deploy": "pm2 kill && pm2 start ./dist/index.js --name bot --restart-delay 3600000"
+    "deploy": "pm2 kill && npm run build:prod && pm2 start ./dist/index.js --name bot --restart-delay 3600000 && pm2 save"
   },
   "author": "",
   "license": "ISC",
