@@ -22,8 +22,8 @@ class WebManager {
 
     private InitRouter(): void {
         // Auth API
-        this.ExpressCore.post('/api/auth/register', AuthController.RegistrationUser)
-        this.ExpressCore.post('/api/auth/login', AuthController.LoginUser)
+        this.ExpressCore.post('/auth/register', AuthController.RegistrationUser)
+        this.ExpressCore.post('/auth/login', AuthController.LoginUser)
 
         // Domains API
         this.ExpressCore.get('/api/domains', RoleMiddleware('admin'), DomainsController.getAllDomains)
