@@ -4,6 +4,7 @@ import AuthController from "../Controller/AuthController";
 import DomainsController from "../Controller/DomainsController";
 import RoleMiddleware from "../Middleware/RoleMiddleware";
 import SendMailDomains from "../Service/SendMailDomains";
+import cors from "cors";
 
 
 
@@ -15,6 +16,7 @@ class WebManager {
         this.ExpressCore = express()
         // @ts-ignore
         this.ExpressCore.use(express.json())
+        this.ExpressCore.use(cors)
 
         this.InitRouter()
     }
