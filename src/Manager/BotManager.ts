@@ -1,5 +1,5 @@
 import { Client, Intents, MessageEmbed } from "discord.js"
-import {botToken, botPrefix} from "../Data/Config.json"
+import {botPrefix} from "../Data/Config.json"
 import Domains from "../Models/Domains";
 
 function checkEmpty(text: string) {
@@ -81,7 +81,7 @@ class BotManager {
                 }
             }
         })
-        await this.client.login(botToken)
+        await this.client.login('NzE4NDQwODk3NzU0MzAwNTAw.Xto6Og.rEXrFLy_2W7fO31N_UPSRG_RZwg')
     }
 
 }
