@@ -1,6 +1,7 @@
 import { Client, Intents, MessageEmbed } from "discord.js"
 import {botPrefix} from "../Data/Config.json"
 import Domains from "../Models/Domains";
+import Setting from "../Models/Setting";
 
 function checkEmpty(text: string) {
     if (text === '' || text === null || text === undefined){
@@ -20,6 +21,7 @@ function checkStatus(status: any) {
 class BotManager {
     public static readonly Instance: BotManager = new BotManager()
     public client!: Client
+    public token!: string
 
     private constructor() {
         this.client = new Client({ intents: [
@@ -32,8 +34,19 @@ class BotManager {
                 Intents.FLAGS.DIRECT_MESSAGE_TYPING,
             ]})
     }
+    async getToken(){
+        try {
+            await Setting.getSetting('discord_token')
+                .then((data) => {
+                    this.token = data[0].value
+                })
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
     async Start(){
+        await this.getToken()
         this.client.on('ready', () => {
             // @ts-ignore
             console.log(`Logged in as ${this.client.user.tag}!`);
@@ -81,7 +94,7 @@ class BotManager {
                 }
             }
         })
-        await this.client.login('NzE4NDQwODk3NzU0MzAwNTAw.Xto6Og.rEXrFLy_2W7fO31N_UPSRG_RZwg')
+        await this.client.login(this.token)
     }
 
 }
