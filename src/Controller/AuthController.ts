@@ -10,14 +10,14 @@ class AuthController {
     // @ts-ignore
     async RegistrationUser(req: express.Request, res: express.Response){
 
-        const {username, pass} = req.body
+        const {username, password} = req.body
 
-        if (username != '' && pass != ''){
+        if (username != '' && password != ''){
             try {
                 await Users.findUser(username).then(async (currentUser) => {
                     if (currentUser.length === 0){
                         await Users.findRole('admin').then(async (role) => {
-                            const hashPassword = bcrypt.hashSync(pass, 10)
+                            const hashPassword = bcrypt.hashSync(password, 10)
                             await Users.createUser({
                                 username: username,
                                 password: hashPassword,
@@ -49,12 +49,12 @@ class AuthController {
 
     async LoginUser(req: express.Request, res: express.Response){
         try {
-            const {username, pass} = req.body
+            const {username, password} = req.body
 
             await Users.findUser(username)
                 .then(user => {
                     if (user.length > 0){
-                        const validPassword = bcrypt.compareSync(pass, user[0].password)
+                        const validPassword = bcrypt.compareSync(password, user[0].password)
                         if (!validPassword){
                             return res.json({
                                 status: false,
