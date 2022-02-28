@@ -3,6 +3,7 @@ import * as core from "express-serve-static-core"
 import AuthController from "../Controller/AuthController";
 import DomainsController from "../Controller/DomainsController";
 import RoleMiddleware from "../Middleware/RoleMiddleware";
+import SendMailDomains from "../Service/SendMailDomains";
 
 
 
@@ -29,6 +30,15 @@ class WebManager {
         this.ExpressCore.put('/api/domains', RoleMiddleware('admin'), DomainsController.changeDomains)
         this.ExpressCore.post('/api/domains', RoleMiddleware('admin'), DomainsController.addDomains)
         this.ExpressCore.delete('/api/domains', RoleMiddleware('admin'), DomainsController.deleteDomains)
+
+        // Service
+        // @ts-ignore
+        this.ExpressCore.get('/api/mail', async (req: express.Request, res:express.Response) => {
+            await SendMailDomains.Instance.SendMail()
+            return res.json({
+                status: true
+            })
+        })
     }
 
     public Start(): void {

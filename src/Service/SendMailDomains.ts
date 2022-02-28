@@ -2,27 +2,28 @@ import nodemailer from "nodemailer"
 import Domains from "../Models/Domains";
 import {smtpLogin, smtpPass, smtpUrl} from "../Data/Config.json"
 
-class DomainsMailer{
-    public static readonly Instance: DomainsMailer = new DomainsMailer()
-    public getNumberOfDays(end: any) {
-        const date1 = new Date();
-        const date2 = new Date(end);
-        const oneDay = 1000 * 60 * 60 * 24;
-        const diffInTime = date2.getTime() - date1.getTime();
-        return Math.round(diffInTime / oneDay);
-    }
+function getNumberOfDays(end: any) {
+    const date1 = new Date();
+    const date2 = new Date(end);
+    const oneDay = 1000 * 60 * 60 * 24;
+    const diffInTime = date2.getTime() - date1.getTime();
+    return Math.round(diffInTime / oneDay);
+}
+
+export default class SendMailDomains {
+    public static readonly Instance: SendMailDomains = new SendMailDomains()
 
     // @ts-ignore
-    async Start() {
+    async SendMail() {
         try {
             const domains = await Domains.getAllDomains()
             let message: string = ''
             for (const domain of domains){
-                if (this.getNumberOfDays(new Date(domain.paidDate)) <= 50){
+                if (getNumberOfDays(new Date(domain.paidDate)) <= 50){
                     message += `
                 <tr>
                     <td>${domain.domain}</td>
-                    <td>${this.getNumberOfDays(new Date(domain.paidDate))}</td>
+                    <td>${getNumberOfDays(new Date(domain.paidDate))}</td>
                     <td>${new Date(domain.paidDate).toLocaleDateString()}</td>
                 </tr>
             `
@@ -67,8 +68,5 @@ class DomainsMailer{
             console.error(e)
         }
     }
-
 }
-
-DomainsMailer.Instance.Start()
 
