@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer"
 import Domains from "../Models/Domains";
 import {smtpLogin, smtpPass, smtpUrl} from "../Data/Config.json"
+import Setting from "../Models/Setting";
 
 function getNumberOfDays(end: any) {
     const date1 = new Date();
@@ -39,10 +40,11 @@ export default class SendMailDomains {
                     pass: smtpPass, // generated ethereal password
                 },
             });
+            const mailTo = await Setting.getSetting('mail_to');
 
             let info = await transporter.sendMail({
                 from: '"Информация по доменам 👻" <support@site-creative.ru>', // sender address
-                to: "qweeex@yandex.ru", // list of receivers
+                to: mailTo[0].value, // list of receivers
                 subject: "Домены к продлению ✔", // Subject line
                 text: "Домены к продлению", // plain text body
                 html: `

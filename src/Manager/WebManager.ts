@@ -16,6 +16,7 @@ class WebManager {
         this.ExpressCore = express()
         this.ExpressCore.use(express.json())
         this.ExpressCore.use(cors())
+        this.ExpressCore.disable('x-powered-by')
         this.InitRouter()
     }
 
@@ -32,12 +33,9 @@ class WebManager {
         this.ExpressCore.delete('/api/domains', RoleMiddleware('admin'), DomainsController.deleteDomains)
 
         // Service
-        // @ts-ignore
         this.ExpressCore.get('/api/mail', async (req: express.Request, res:express.Response) => {
             await SendMailDomains.Instance.SendMail()
-            return res.json({
-                status: true
-            })
+            return res.send('ok');
         })
     }
 
