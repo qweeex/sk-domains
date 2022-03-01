@@ -19,35 +19,37 @@ export default class SendMailDomains {
         try {
             const domains = await Domains.getAllDomains()
             let message: string = ''
+            let options = {  year: 'numeric', month: 'long', day: 'numeric' }
             for (const domain of domains){
                 if (getNumberOfDays(new Date(domain.paidDate)) <= 50){
                     message += `
-                <tr>
-                    <td>${domain.domain}</td>
-                    <td>${getNumberOfDays(new Date(domain.paidDate))}</td>
-                    <td>${new Date(domain.paidDate).toLocaleDateString()}</td>
-                </tr>
-            `
+                        <tr>
+                            <td>${domain.domain}</td>
+                            <td>${getNumberOfDays(new Date(domain.paidDate))}</td>
+                            <td>${new Date(domain.paidDate).toLocaleDateString('ru-RU', options)}</td>
+                        </tr>
+                    `
                 }
             }
 
-            let transporter = nodemailer.createTransport({
-                host: smtpUrl,
-                port: 465,
-                secure: true, // true for 465, false for other ports
-                auth: {
-                    user: smtpLogin, // generated ethereal user
-                    pass: smtpPass, // generated ethereal password
-                },
-            });
-            const mailTo = await Setting.getSetting('mail_to');
+            if (message != ''){
+                let transporter = nodemailer.createTransport({
+                    host: smtpUrl,
+                    port: 465,
+                    secure: true,
+                    auth: {
+                        user: smtpLogin,
+                        pass: smtpPass,
+                    },
+                });
+                const mailTo = await Setting.getSetting('mail_to');
 
-            let info = await transporter.sendMail({
-                from: '"Информация по доменам 👻" <support@site-creative.ru>', // sender address
-                to: mailTo[0].value, // list of receivers
-                subject: "Домены к продлению ✔", // Subject line
-                text: "Домены к продлению", // plain text body
-                html: `
+                let info = await transporter.sendMail({
+                    from: '"Информация по доменам 👻" <support@site-creative.ru>', // sender address
+                    to: mailTo[0].value, // list of receivers
+                    subject: "Домены к продлению ✔", // Subject line
+                    text: "Домены к продлению", // plain text body
+                    html: `
                 <table border="1" cellpadding="3" width="100%">
                    <caption>Домены к продлению</caption>
                    <tr>
@@ -58,13 +60,11 @@ export default class SendMailDomains {
                    ${message}
                   </table>
                 `, // html body
-            });
+                });
 
-            console.log("Message sent: %s", info.messageId);
-            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-            // Preview only available when sending through an Ethereal account
-            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+                console.log("Message sent: %s", info.messageId);
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            }
 
         } catch (e) {
             console.error(e)
