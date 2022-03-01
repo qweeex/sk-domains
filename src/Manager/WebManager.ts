@@ -58,7 +58,7 @@ class WebManager {
     public Start(): void {
         setInterval(async () => {
             await this.mail()
-        }, 900000)
+        }, 86400000)
         this.ExpressCore.listen(8081, () => {
             console.log('Server start')
         })
