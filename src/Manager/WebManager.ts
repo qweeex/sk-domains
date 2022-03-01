@@ -50,7 +50,15 @@ class WebManager {
         })
     }
 
+    public async mail(){
+        await SendMailDomains.Instance.SendMail()
+        await SendMailHosting.Instance.SendMail()
+    }
+
     public Start(): void {
+        setInterval(async () => {
+            await this.mail()
+        }, 900000)
         this.ExpressCore.listen(8081, () => {
             console.log('Server start')
         })
