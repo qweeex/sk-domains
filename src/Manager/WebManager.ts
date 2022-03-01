@@ -5,6 +5,8 @@ import DomainsController from "../Controller/DomainsController";
 import RoleMiddleware from "../Middleware/RoleMiddleware";
 import SendMailDomains from "../Service/SendMailDomains";
 import cors from "cors";
+import SendMailHosting from "../Service/SendMailHosting";
+import HostingControllers from "../Controller/HostingControllers";
 
 
 
@@ -32,9 +34,16 @@ class WebManager {
         this.ExpressCore.post('/api/domains', RoleMiddleware('admin'), DomainsController.addDomains)
         this.ExpressCore.delete('/api/domains', RoleMiddleware('admin'), DomainsController.deleteDomains)
 
+        // Hosting info
+        this.ExpressCore.get('/api/hosting/sites', RoleMiddleware('admin'), HostingControllers.getSitesOnHosting)
+
         // Service
-        this.ExpressCore.get('/api/mail', async (req: express.Request, res:express.Response) => {
+        this.ExpressCore.get('/api/mail/domains', async (req: express.Request, res:express.Response) => {
             await SendMailDomains.Instance.SendMail()
+            return res.send('ok');
+        })
+        this.ExpressCore.get('/api/mail/hosting', async (req: express.Request, res:express.Response) => {
+            await SendMailHosting.Instance.SendMail()
             return res.send('ok');
         })
     }
