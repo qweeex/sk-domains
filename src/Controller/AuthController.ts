@@ -4,6 +4,7 @@ import Users from "../Models/Users";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {secret} from "../Data/Config.json"
+import Setting from "../Models/Setting";
 
 class AuthController {
 
@@ -85,6 +86,24 @@ class AuthController {
             return res.json({
                 status: false,
                 err: e
+            })
+        }
+    }
+
+    async GetTokenBot(req: express.Request, res: express.Response){
+        try {
+
+            const data = await Setting.getSetting('discord_token')
+            return res.json({
+                status: true,
+                token: data[0].value
+            })
+
+        } catch (error) {
+            console.error(error)
+            return res.json({
+                status: false,
+                error
             })
         }
     }

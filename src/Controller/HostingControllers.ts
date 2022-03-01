@@ -21,5 +21,25 @@ class HostingControllers {
         }
     }
 
+    async getAccountInfo(req: express.Request, res: express.Response){
+        try {
+
+            await BegetApi.AccountInformation().then((data) => {
+                res.json({
+                    status: true,
+                    data
+                })
+            })
+
+        } catch (error) {
+            console.log(error)
+            return res.json({
+                status: false,
+                message: "Error get sites",
+                error
+            })
+        }
+    }
+
 }
 export default new HostingControllers()

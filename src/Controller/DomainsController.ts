@@ -1,7 +1,7 @@
 import express from "express";
 import Domains from "../Models/Domains";
 import DomainsInterface from "../Struct/DomainsInterface";
-import DomainsData from "../Data/Domains.json"
+
 
 class DomainsController{
 
@@ -28,6 +28,22 @@ class DomainsController{
             })
 
         } catch (error) {
+            console.log(error)
+            return res.json({
+                status: false,
+                error
+            })
+        }
+    }
+    async getCurrentDomains(req: express.Request, res: express.Response){
+        try {
+            const {id} = req.body
+            const domain = await Domains.findDomain(id)
+            return res.json({
+                status: true,
+                domain
+            })
+        } catch (error){
             console.log(error)
             return res.json({
                 status: false,

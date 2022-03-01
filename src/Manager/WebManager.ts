@@ -25,17 +25,19 @@ class WebManager {
 
     private InitRouter(): void {
         // Auth API
-        this.ExpressCore.post('/auth/register', AuthController.RegistrationUser)
         this.ExpressCore.post('/auth/login', AuthController.LoginUser)
+        this.ExpressCore.post('/auth/token', RoleMiddleware('admin'), AuthController.GetTokenBot)
 
         // Domains API
         this.ExpressCore.get('/api/domains', RoleMiddleware('admin'), DomainsController.getAllDomains)
         this.ExpressCore.put('/api/domains', RoleMiddleware('admin'), DomainsController.changeDomains)
         this.ExpressCore.post('/api/domains', RoleMiddleware('admin'), DomainsController.addDomains)
+        this.ExpressCore.post('/api/domains/info', RoleMiddleware('admin'), DomainsController.getCurrentDomains)
         this.ExpressCore.delete('/api/domains', RoleMiddleware('admin'), DomainsController.deleteDomains)
 
         // Hosting info
         this.ExpressCore.get('/api/hosting/sites', RoleMiddleware('admin'), HostingControllers.getSitesOnHosting)
+        this.ExpressCore.get('/api/hosting/accounts', RoleMiddleware('admin'), HostingControllers.getAccountInfo)
 
         // Service
         this.ExpressCore.get('/api/mail/domains', async (req: express.Request, res:express.Response) => {

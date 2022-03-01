@@ -74,7 +74,7 @@ class BegetApi {
                         .then((result) => {
                             data.push({
                                 host: item.login,
-                                data: result.answer.result
+                                data: result["answer"].result
                             })
                         })
                 }
