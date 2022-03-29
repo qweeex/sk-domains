@@ -55,7 +55,8 @@ class WebManager {
         await SendMailHosting.Instance.SendMail()
     }
 
-    public Start(): void {
+    public async Start() {
+        await this.mail()
         setInterval(async () => {
             await this.mail()
         }, 86400000)

@@ -7,7 +7,7 @@ class Domains {
     async getAllDomains(): Promise<any>{
         return new Promise<any>(async (resolve, reject) => {
             await MysqlManager.Instance.MysqlPoolConnections.query({
-                sql: "SELECT * FROM `domains`"
+                sql: "SELECT * FROM `domains` ORDER BY `domains`.`paidDate` DESC"
             }, (err, domains) => {
                 if (err){
                     reject(err)
